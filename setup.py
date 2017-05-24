@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='openconnect_wrapper',
-    version='0.1',
+    version='0.2',
     py_modules=['openconnect_wrapper'],
     install_requires=[
         'Click==6.7',
