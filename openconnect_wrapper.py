@@ -73,7 +73,6 @@ def start(openconnect_args=None):
         '--pid-file={}'.format(PID_FILE),
     ]
     if openconnect_args is not None:
-        # click.echo('extra args: {}'.format(', '.join(openconnect_args)))
         command += list(openconnect_args)
     if call(command) == 0:
         click.echo('vpn: started')
