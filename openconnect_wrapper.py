@@ -71,6 +71,7 @@ def start(openconnect_args=None):
         '--setuid={}'.format(os.getlogin()),
         '--background',
         '--pid-file={}'.format(PID_FILE),
+        '--quiet'
     ]
     if openconnect_args is not None:
         command += list(openconnect_args)
