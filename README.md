@@ -3,7 +3,7 @@ Wrapper script for OpenConnect on Mac OS systems
 
 ## Description
 
-Tired of running OpenConnect in a foreground window, or have to find and kill the process once you are finished needing a VPN connection?  Then this convenience wrapper will help you no end.
+Tired of the (admittedly trivial) overhead of running openconnect from the command line and having to find and kill it once you are ready to disconnect?  Then this convenience wrapper will help you no end.
 
 ## Requirements
 
