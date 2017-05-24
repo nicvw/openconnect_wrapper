@@ -47,4 +47,4 @@ disconnect from the vpn
 
 ## Detail
 
-This script simply implements calls the OpenVPN client with **--background --pid-file --setuid** arguments and any other arguments you pass it
+This script simply calls the OpenVPN client with **--background --pid-file --setuid** arguments plus any other arguments you pass it
