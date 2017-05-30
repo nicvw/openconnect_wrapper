@@ -7,16 +7,23 @@ from subprocess import call
 import click
 import psutil
 
-WORK_DIR = os.path.join(os.getenv('HOME'), '.openconnect')
-PID_FILE = os.path.join(WORK_DIR, 'openconnect.pid')
-
-SUDO = '/usr/bin/sudo'
-OPENCONNECT = '/usr/local/bin/openconnect'
-
 
 class NoPidError(Exception):
     """Error type."""
     pass
+
+
+class ExecutableNotFound(Exception):
+    def __init__(self, msg):
+        super(ExecutableNotFound, self).__init__("'{}' not found in path".format(msg))
+
+
+def __work_dir():
+    return os.path.join(os.getenv('HOME'), '.openconnect')
+
+
+def __pid_file():
+    return os.path.join(__work_dir(), 'openconnect.pid')
 
 
 def __mkdir_p(path):
@@ -32,7 +39,7 @@ def __mkdir_p(path):
 def __get_pid():
     pid = None
     try:
-        with open(PID_FILE, 'r') as pidfile:
+        with open(__pid_file(), 'r') as pidfile:
             pid = int(pidfile.read())
     except IOError as err:
         if err.errno != errno.ENOENT:
@@ -50,6 +57,13 @@ def __is_running():
     return psutil.pid_exists(pid)
 
 
+def __find_executable(executable):
+    for path in os.getenv('PATH').split(':'):
+        if os.path.isdir(path) and executable in os.listdir(path):
+            return os.path.join(path, executable)
+    raise ExecutableNotFound(executable)
+
+
 @click.group()
 def cli():
     """Entry point for CLI execution."""
@@ -64,15 +78,20 @@ def start(openconnect_args=None):
         click.echo('vpn: already connected')
         return
 
-    __mkdir_p(WORK_DIR)
-    command = [
-        SUDO,
-        OPENCONNECT,
-        '--setuid={}'.format(os.getlogin()),
-        '--background',
-        '--pid-file={}'.format(PID_FILE),
-        '--quiet'
-    ]
+    __mkdir_p(__work_dir())
+    try:
+        command = [
+            __find_executable('sudo'),
+            __find_executable('openconnect'),
+            '--setuid={}'.format(os.getlogin()),
+            '--background',
+            '--pid-file={}'.format(__pid_file()),
+            '--quiet'
+        ]
+    except ExecutableNotFound as err:
+        click.echo(str(err))
+        exit(1)
+
     if openconnect_args is not None:
         command += list(openconnect_args)
     if call(command) == 0:
